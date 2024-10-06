@@ -20,7 +20,7 @@ def on_message(ws, message):
         print("recieve connect message")
         send_message(ws, "40")
         send_message(ws, register_message())
-    if message_type == '42':
+    elif message_type == '42':
         if("newMessage") in message_fields:
             print("new message recieved")
             print(message_fields[1]["data"]["message"]["message"])
@@ -29,7 +29,7 @@ def on_error(ws, error):
     print(f"Error: {error}")
 
 def on_close(ws, close_status_code, close_reason):
-    print("WebSocket closed")
+    print(f"WebSocket closed, code: {close_status_code}, reason: {close_reason}")
 
 
 def new_message(input: str):
