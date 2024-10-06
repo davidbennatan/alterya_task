@@ -20,6 +20,10 @@ def on_message(ws, message):
         print("recieve connect message")
         send_message(ws, "40")
         send_message(ws, register_message())
+    if message_type == '42':
+        if("newMessage") in message_fields:
+            print("new message recieved")
+            print(message_fields[1]["data"]["message"]["message"])
 
 def on_error(ws, error):
     print(f"Error: {error}")
@@ -28,11 +32,10 @@ def on_close(ws, close_status_code, close_reason):
     print("WebSocket closed")
 
 
-
 def new_message(input: str):
     global visitor_id
     global ppk
-    message  = {"message":input,"messageId":str(uuid.uuid4()), "url":"http://127.0.0.1:8000/","visitorId":f"{visitor_id}","projectPublicKey":f"{ppk}","device":"desktop"}	
+    message  = {"message":input,"messageId":str(uuid.uuid4()), "visitorId":f"{visitor_id}","projectPublicKey":f"{ppk}"}	
     return f'420["visitorNewMessage",{json.dumps(message)}]'
 
 def send_message(ws, ms):
@@ -79,7 +82,6 @@ def register_message():
 def on_open(ws):
     print("WebSocket connection opened")
     def send_commands():
-        # send_message(ws, register_message())
         while True:
             command = input()
             send_message(ws, new_message(command))
@@ -99,8 +101,6 @@ def main():
     ppk = sys.argv[1]
     visitor_id = sys.argv[2]
     ws_url = f"wss://socket.tidio.co/socket.io/?ppk={ppk}&transport=websocket"
-
-    # websocket.enableTrace(True)
     ws_app = websocket.WebSocketApp(ws_url,
                                     on_open=on_open,
                                     on_message=on_message,
